@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth font-["GeistMono"];
+  }
+  body {
+    @apply bg-neutral-900 text-neutral-100;
+  }
+
+  h1 {
+    @apply text-4xl font-bold tracking-widest;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold tracking-widest;
+  }
+
+  h3 {
+    @apply text-2xl font-medium tracking-widest;
+  }
+
+  h4 {
+    @apply text-lg tracking-widest;
+  }
+}
+
+@layer components {
+}
+
+@layer utilities {
+}
