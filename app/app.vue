@@ -173,7 +173,7 @@
 import { music } from "@/utils/music";
 import type { song } from "@/utils/music";
 
-const track = ref(music[0]); // Start with first song to avoid hydration mismatch
+const track = ref<song | null>(null); // Start with null to avoid SSR loading
 const isClient = ref(false);
 
 // Set random song and enable highlighting only on client

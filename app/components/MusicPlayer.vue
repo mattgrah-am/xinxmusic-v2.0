@@ -354,13 +354,16 @@ const initializeWaveSurfer = () => {
 
 onMounted(() => {
   artwork.value = props.audioData.artwork;
-  initializeWaveSurfer();
+  // Ensure we're on the client before initializing WaveSurfer
+  if (import.meta.client) {
+    initializeWaveSurfer();
+  }
 });
 
 watch(
   () => props.audioData.audio,
   (newAudioUrl: string) => {
-    if (wavesurfer.value) {
+    if (wavesurfer.value && import.meta.client) {
       // Start loading states when changing tracks
       audioLoading.value = true;
       waveLoading.value = true;
