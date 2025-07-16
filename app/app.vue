@@ -1,12 +1,12 @@
 <template>
   <div>
     <div
-      class="mx-auto h-full max-w-screen-lg rounded border-x border-neutral-950 bg-neutral-950/25 pb-24 pt-4 shadow"
+      class="mx-auto h-full max-w-screen-lg rounded border-x border-neutral-950 bg-neutral-950/25 pt-4 pb-24 shadow"
     >
       <div class="mt-4 flex items-end justify-between px-6">
-        <p class="uppercase tracking-widest">Music archive</p>
+        <p class="tracking-widest uppercase">Music archive</p>
         <p
-          class="mb-1 flex items-center gap-2 fill-neutral-100 text-sm uppercase tracking-widest"
+          class="mb-1 flex items-center gap-2 fill-neutral-100 text-sm tracking-widest uppercase"
         >
           Contact <IconMail class="size-5 text-neutral-100" />
         </p>
@@ -33,7 +33,7 @@
           >
             EP
           </h2>
-          <h3 class="uppercase text-neutral-200">
+          <h3 class="text-neutral-200 uppercase">
             {{ item[0].album }}
           </h3>
         </div>
@@ -60,7 +60,7 @@
           class="mb-4 flex items-center gap-6 rounded-xl border border-red-900/15 bg-red-900/15"
         >
           <h2
-            class="rounded-xl border border-red-900 bg-red-700 px-3 py-1 uppercase text-neutral-50 shadow"
+            class="rounded-xl border border-red-900 bg-red-700 px-3 py-1 text-neutral-50 uppercase shadow"
           >
             Single
           </h2>
@@ -87,7 +87,7 @@
           class="mb-4 flex items-center gap-6 rounded-xl border border-red-900/15 bg-red-900/15"
         >
           <h2
-            class="rounded-xl border border-red-900 bg-red-700 px-3 py-1 uppercase text-neutral-50 shadow"
+            class="rounded-xl border border-red-900 bg-red-700 px-3 py-1 text-neutral-50 uppercase shadow"
           >
             Remix
           </h2>
@@ -136,8 +136,8 @@ const endOfTime = ref(music.filter((track) => track.album === "End of Time"));
 const closeYourEyesAndListen = ref(
   music.filter((track) => track.album === "Close Your Eyes and Listen"),
 );
-const ep = [endOfTime.value, closeYourEyesAndListen.value];
 
+const ep = [endOfTime.value, closeYourEyesAndListen.value];
 const single = ref(music.filter((track) => track.album === "single"));
 const remix = ref(music.filter((track) => track.album === "remix"));
 </script>
