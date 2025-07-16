@@ -131,7 +131,7 @@
         </div>
       </div>
       <footer class="text-center">
-        <p>
+        <p class="text-sm text-neutral-400">
           Created with 🖤 by
           <NuxtLink
             to="https://matg.dev"
