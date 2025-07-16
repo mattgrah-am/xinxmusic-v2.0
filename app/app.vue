@@ -161,7 +161,11 @@
       </footer>
     </main>
 
-    <MusicPlayer v-if="track" :audio-data="track" @track-change="handleTrackChange" />
+    <MusicPlayer
+      v-if="track"
+      :audio-data="track"
+      @track-change="handleTrackChange"
+    />
   </div>
 </template>
 
@@ -169,32 +173,13 @@
 import { music } from "@/utils/music";
 import type { song } from "@/utils/music";
 
-const config = useRuntimeConfig();
-const debug = !config.public.production; // Enable debug mode based on environment
-
 const track = ref(music[0]); // Start with first song to avoid hydration mismatch
 const isClient = ref(false);
-
-// Debug: Log the selected track on initialization
-if (debug)
-  console.log(
-    "Initial track selected:",
-    track.value?.title,
-    "ID:",
-    track.value?.id,
-  );
 
 // Set random song and enable highlighting only on client
 onMounted(() => {
   track.value = music[Math.floor(Math.random() * music.length)];
   isClient.value = true;
-  if (debug)
-    console.log(
-      "Client-side track selected:",
-      track.value?.title,
-      "ID:",
-      track.value?.id,
-    );
 });
 
 const endOfTime = ref(music.filter((track) => track.album === "End of Time"));
