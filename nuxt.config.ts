@@ -60,7 +60,7 @@ export default defineNuxtConfig({
         // Additional SEO tags
         { name: "format-detection", content: "telephone=no" },
         { name: "msapplication-TileColor", content: "#0a0a0a" },
-        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "mobile-web-app-capable", content: "yes" },
         {
           name: "apple-mobile-web-app-status-bar-style",
           content: "black-translucent",
