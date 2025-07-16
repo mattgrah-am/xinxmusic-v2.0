@@ -1,1 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_nuxt/
+Disallow: /admin/
 
+# Sitemap
+Sitemap: https://xinxmusic.com/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

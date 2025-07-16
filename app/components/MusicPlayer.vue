@@ -7,9 +7,9 @@
         <div class="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
-            @click="previousTrack"
             :disabled="!hasPrevious || isLoading"
             class="cursor-pointer"
+            @click="previousTrack"
           >
             <IconBack
               class="size-5 shrink-0 text-neutral-50 transition-colors hover:text-red-400 sm:size-6"
@@ -18,9 +18,9 @@
             <span class="sr-only">Previous track</span>
           </button>
           <button
-            @click="playPause"
             :disabled="isLoading"
             class="cursor-pointer"
+            @click="playPause"
           >
             <IconWaveLoading
               v-if="isLoading"
@@ -40,9 +40,9 @@
           </button>
           <button
             type="button"
-            @click="nextTrack"
             :disabled="!hasNext || isLoading"
             class="cursor-pointer"
+            @click="nextTrack"
           >
             <IconForward
               class="size-5 shrink-0 text-neutral-50 transition-colors hover:text-red-400 sm:size-6"
@@ -84,31 +84,35 @@
           class="w-full"
           :class="{ 'opacity-0': waveError || waveLoading }"
         />
-        <div v-if="waveLoading" class="absolute inset-0 flex items-center justify-center">
+        <div
+          v-if="waveLoading"
+          class="absolute inset-0 flex items-center justify-center"
+        >
           <IconWaveLoading class="w-4 text-red-600" />
         </div>
-        <div v-else-if="waveError" class="absolute inset-0 flex items-center justify-center">
-          <div class="text-xs text-neutral-300">
-            Error loading waveform.
-          </div>
+        <div
+          v-else-if="waveError"
+          class="absolute inset-0 flex items-center justify-center"
+        >
+          <div class="text-xs text-neutral-300">Error loading waveform.</div>
         </div>
       </div>
       <div class="flex items-center gap-2 sm:hidden">
         <button
           type="button"
-          @click="shuffleAndPlay"
           :disabled="isLoading"
           class="cursor-pointer transition-colors hover:text-red-400"
           :class="{ 'opacity-50': isLoading }"
+          @click="shuffleAndPlay"
         >
           <IconShuffle class="size-5 shrink-0" />
           <span class="sr-only">Play random song</span>
         </button>
         <button
           type="button"
-          @click="toggleMute"
           :disabled="isLoading"
           class="cursor-pointer"
+          @click="toggleMute"
         >
           <IconVolumeLow
             v-if="!isMuted"
@@ -134,19 +138,19 @@
     <div class="hidden items-center gap-4 sm:flex">
       <button
         type="button"
-        @click="shuffleAndPlay"
         :disabled="isLoading"
         class="cursor-pointer transition-colors hover:text-red-400"
         :class="{ 'opacity-50': isLoading }"
+        @click="shuffleAndPlay"
       >
         <IconShuffle class="size-6 shrink-0" />
         <span class="sr-only">Play random song</span>
       </button>
       <button
         type="button"
-        @click="toggleMute"
         :disabled="isLoading"
         class="cursor-pointer"
+        @click="toggleMute"
       >
         <IconVolumeLow
           v-if="!isMuted"
@@ -183,9 +187,8 @@ const audioLoading = ref(false);
 const artwork = ref("");
 const totalTime = ref<number | null>(null);
 const duration = ref("0:00");
-const timerInterval = ref<number | null>(null);
+const timerInterval = ref<ReturnType<typeof setInterval> | null>(null);
 const currentTime = ref("0:00");
-const isShuffled = ref(false);
 const isMuted = ref(false);
 const currentTrackIndex = ref(0);
 const shouldAutoPlay = ref(false);
@@ -269,7 +272,7 @@ const shuffleAndPlay = () => {
   // Emit the track change to update the main track
   emit("track-change", randomSong);
 
-  if (debug) console.log("Shuffle selected:", randomSong.title);
+  if (debug) console.log("Shuffle selected:", randomSong?.title);
 };
 
 const toggleMute = () => {
