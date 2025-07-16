@@ -5,19 +5,38 @@
     <ClientOnly>
       <div class="flex shrink-0 items-center gap-4">
         <div class="flex items-center gap-3">
-          <button type="button">
-            <IconBack class="size-6 shrink-0 text-neutral-50" />
+          <button
+            type="button"
+            @click="previousTrack"
+            :disabled="!hasPrevious || isLoading"
+            class="cursor-pointer"
+          >
+            <IconBack
+              class="size-6 shrink-0 text-neutral-50"
+              :class="{ 'opacity-50': !hasPrevious || isLoading }"
+            />
+            <span class="sr-only">Previous track</span>
           </button>
-          <button @click="playPause">
+          <button @click="playPause" :disabled="isLoading" class="cursor-pointer">
+            <IconWaveLoading v-if="isLoading" class="size-8 shrink-0 text-red-500 animate-spin" />
             <IconPlay
-              v-if="!isPlaying"
+              v-else-if="!isPlaying"
               class="size-8 shrink-0 fill-neutral-50"
             />
             <IconPause v-else class="size-8 shrink-0 fill-neutral-50" />
-            <span class="sr-only">{{ isPlaying ? "Pause" : "Play" }}</span>
+            <span class="sr-only">{{ isLoading ? "Loading..." : isPlaying ? "Pause" : "Play" }}</span>
           </button>
-          <button type="button">
-            <IconForward class="size-6 shrink-0 text-neutral-50" />
+          <button
+            type="button"
+            @click="nextTrack"
+            :disabled="!hasNext || isLoading"
+            class="cursor-pointer"
+          >
+            <IconForward
+              class="size-6 shrink-0 text-neutral-50"
+              :class="{ 'opacity-50': !hasNext || isLoading }"
+            />
+            <span class="sr-only">Next track</span>
           </button>
         </div>
 
@@ -65,14 +84,38 @@
     </div>
 
     <div class="flex items-center gap-4">
-      <button type="button">
-        <IconShuffle class="size-6 shrink-0 text-neutral-50" />
+      <button
+        type="button"
+        @click="toggleShuffle"
+        :disabled="isLoading"
+        :class="{ 'text-red-500': isShuffled, 'opacity-50': isLoading }"
+        class="cursor-pointer"
+      >
+        <IconShuffle class="size-6 shrink-0" />
+        <span class="sr-only">{{
+          isShuffled ? "Disable shuffle" : "Enable shuffle"
+        }}</span>
       </button>
-      <button type="button">
-        <IconRepeat class="size-6 shrink-0 text-neutral-50" />
+      <button
+        type="button"
+        @click="toggleRepeat"
+        :disabled="isLoading"
+        :class="{ 'text-red-500': isRepeating, 'opacity-50': isLoading }"
+        class="cursor-pointer"
+      >
+        <IconRepeat class="size-6 shrink-0" />
+        <span class="sr-only">{{
+          isRepeating ? "Disable repeat" : "Enable repeat"
+        }}</span>
       </button>
-      <button type="button">
-        <IconVolumeLow class="size-6 shrink-0 text-neutral-50" />
+      <button type="button" @click="toggleMute" :disabled="isLoading" class="cursor-pointer">
+        <IconVolumeLow
+          v-if="!isMuted"
+          class="size-6 shrink-0 text-neutral-50"
+          :class="{ 'opacity-50': isLoading }"
+        />
+        <IconMute v-else class="size-6 shrink-0 text-neutral-50" :class="{ 'opacity-50': isLoading }" />
+        <span class="sr-only">{{ isMuted ? "Unmute" : "Mute" }}</span>
       </button>
     </div>
   </div>
@@ -82,16 +125,24 @@
 import WaveSurfer from "wavesurfer.js";
 import Hover from "wavesurfer.js/dist/plugins/hover.esm.js";
 
+import { music } from "@/utils/music";
+import type { song } from "@/utils/music";
+
 const waveformRef = ref<HTMLElement | null>(null);
 const wavesurfer = ref<WaveSurfer | null>(null);
 const isPlaying = ref(false);
 const waveLoading = ref(false);
 const waveError = ref(false);
+const audioLoading = ref(false);
 const artwork = ref("");
 const totalTime = ref<number | null>(null);
 const duration = ref("0:00");
 const timerInterval = ref<number | null>(null);
 const currentTime = ref("0:00");
+const isShuffled = ref(false);
+const isRepeating = ref(false);
+const isMuted = ref(false);
+const currentTrackIndex = ref(0);
 
 const props = defineProps<{
   audioData: song;
@@ -109,10 +160,18 @@ const props = defineProps<{
   };
 }>();
 
-const emit = defineEmits(["random-track"]);
+const emit = defineEmits(["random-track", "track-change"]);
 
+// Computed properties for navigation
+const hasPrevious = computed(() => currentTrackIndex.value > 0);
+const hasNext = computed(() => currentTrackIndex.value < music.length - 1);
+const isLoading = computed(() => waveLoading.value || audioLoading.value);
+
+// Initialize current track index
 onMounted(() => {
-  artwork.value = props.audioData.artwork;
+  currentTrackIndex.value = music.findIndex(
+    (track) => track.id === props.audioData.id,
+  );
 });
 
 const playPause = () => {
@@ -123,13 +182,48 @@ const playPause = () => {
   }
 };
 
-onMounted(() => {
+const previousTrack = () => {
+  if (hasPrevious.value) {
+    currentTrackIndex.value--;
+    const newTrack = music[currentTrackIndex.value];
+    emit("track-change", newTrack);
+  }
+};
+
+const nextTrack = () => {
+  if (hasNext.value) {
+    currentTrackIndex.value++;
+    const newTrack = music[currentTrackIndex.value];
+    emit("track-change", newTrack);
+  }
+};
+
+const toggleShuffle = () => {
+  isShuffled.value = !isShuffled.value;
+};
+
+const toggleRepeat = () => {
+  isRepeating.value = !isRepeating.value;
+};
+
+const toggleMute = () => {
+  if (wavesurfer.value) {
+    isMuted.value = !isMuted.value;
+    wavesurfer.value.setMuted(isMuted.value);
+  }
+};
+
+const initializeWaveSurfer = () => {
   if (!waveformRef.value) {
     console.error("Waveform container element not found.");
     waveError.value = true;
     return;
   }
+  
+  // Start loading states
   waveLoading.value = true;
+  audioLoading.value = true;
+  
   wavesurfer.value = WaveSurfer.create({
     container: waveformRef.value,
     waveColor: props.waveformOptions?.waveColor ?? "oklch(0.872 0.01 258.338)",
@@ -156,9 +250,16 @@ onMounted(() => {
 
   wavesurfer.value.load(props.audioData.audio);
 
+  // Audio is loading - wait for it to be ready
+  wavesurfer.value.on("loading", (percent) => {
+    console.log("Loading progress:", percent + "%");
+    audioLoading.value = true;
+  });
+
   wavesurfer.value.on("ready", () => {
     console.log("WaveSurfer is ready.");
     waveLoading.value = false;
+    audioLoading.value = false;
     totalTime.value = wavesurfer.value?.getDuration() ?? 0;
     const minutes = Math.floor(totalTime.value / 60);
     const seconds = Math.floor(totalTime.value % 60);
@@ -175,14 +276,31 @@ onMounted(() => {
     stopTimer();
     currentTime.value = "0:00";
   });
+
+  // Handle loading errors
+  wavesurfer.value.on("error", (error) => {
+    console.error("Audio loading error:", error);
+    waveError.value = true;
+    waveLoading.value = false;
+    audioLoading.value = false;
+  });
+};
+
+onMounted(() => {
+  artwork.value = props.audioData.artwork;
+  initializeWaveSurfer();
 });
 
 watch(
   () => props.audioData.audio,
   (newAudioUrl: string) => {
     if (wavesurfer.value) {
+      // Start loading states when changing tracks
+      audioLoading.value = true;
+      waveLoading.value = true;
+      isPlaying.value = false;
+      
       wavesurfer.value.load(newAudioUrl);
-      isPlaying.value = !isPlaying.value;
     }
   },
 );
@@ -193,7 +311,7 @@ const startTimer = () => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     currentTime.value = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  }, 100); // Update every 100ms (adjust as needed)
+  }, 250);
 };
 
 const stopTimer = () => {
