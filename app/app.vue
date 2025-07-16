@@ -5,11 +5,12 @@
     >
       <div class="mt-4 flex items-end justify-between px-6">
         <p class="tracking-widest uppercase">Music archive</p>
-        <p
-          class="mb-1 flex items-center gap-2 fill-neutral-100 text-sm tracking-widest uppercase"
+        <a
+          :href="emailHref"
+          class="mb-1 flex items-center gap-2 fill-neutral-100 text-sm tracking-widest uppercase hover:text-neutral-300 transition-colors"
         >
           Contact <IconMail class="size-5 text-neutral-100" />
-        </p>
+        </a>
       </div>
 
       <div
@@ -123,12 +124,13 @@
       </footer>
     </div>
 
-    <MusicPlayer :audio-data="track" />
+    <MusicPlayer :audio-data="track" @track-change="handleTrackChange" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { music } from "@/utils/music";
+import type { song } from "@/utils/music";
 
 const track = ref(music[Math.floor(Math.random() * music.length)]);
 
@@ -140,4 +142,12 @@ const closeYourEyesAndListen = ref(
 const ep = [endOfTime.value, closeYourEyesAndListen.value];
 const single = ref(music.filter((track) => track.album === "single"));
 const remix = ref(music.filter((track) => track.album === "remix"));
+
+const handleTrackChange = (newTrack: song) => {
+  track.value = newTrack;
+};
+
+// Simple email obfuscation - base64 encoded
+const obfuscatedEmail = 'Y29udGFjdEB4aW54bXVzaWMuY29t'; // base64: contact@xinxmusic.com
+const emailHref = computed(() => `mailto:${atob(obfuscatedEmail)}?subject=Mail from xinxmusic.com`);
 </script>
