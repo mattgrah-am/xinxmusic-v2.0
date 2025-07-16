@@ -175,9 +175,6 @@ import Hover from "wavesurfer.js/dist/plugins/hover.esm.js";
 import { music } from "@/utils/music";
 import type { song } from "@/utils/music";
 
-const config = useRuntimeConfig();
-const debug = !config.public.production; // Enable debug mode based on environment
-
 const waveformRef = ref<HTMLElement | null>(null);
 const wavesurfer = ref<WaveSurfer | null>(null);
 const isPlaying = ref(false);
@@ -236,12 +233,10 @@ watch(
   () => props.audioData.artwork,
   (newArtwork) => {
     artwork.value = newArtwork;
-    if (debug) console.log("Artwork updated:", newArtwork);
   },
 );
 
 const playPause = () => {
-  if (debug) console.log("playPause");
   if (wavesurfer.value) {
     wavesurfer.value.playPause();
     isPlaying.value = !isPlaying.value;
@@ -271,8 +266,6 @@ const shuffleAndPlay = () => {
 
   // Emit the track change to update the main track
   emit("track-change", randomSong);
-
-  if (debug) console.log("Shuffle selected:", randomSong?.title);
 };
 
 const toggleMute = () => {
@@ -284,7 +277,7 @@ const toggleMute = () => {
 
 const initializeWaveSurfer = () => {
   if (!waveformRef.value) {
-    if (debug) console.error("Waveform container element not found.");
+    console.error("Waveform container element not found.");
     waveError.value = true;
     return;
   }
@@ -320,13 +313,11 @@ const initializeWaveSurfer = () => {
   wavesurfer.value.load(props.audioData.audio);
 
   // Audio is loading - wait for it to be ready
-  wavesurfer.value.on("loading", (percent) => {
-    if (debug) console.log("Loading progress:", percent + "%");
+  wavesurfer.value.on("loading", () => {
     audioLoading.value = true;
   });
 
   wavesurfer.value.on("ready", () => {
-    if (debug) console.log("WaveSurfer is ready.");
     waveLoading.value = false;
     audioLoading.value = false;
     totalTime.value = wavesurfer.value?.getDuration() ?? 0;
@@ -354,7 +345,7 @@ const initializeWaveSurfer = () => {
 
   // Handle loading errors
   wavesurfer.value.on("error", (error) => {
-    if (debug) console.error("Audio loading error:", error);
+    console.error("Audio loading error:", error);
     waveError.value = true;
     waveLoading.value = false;
     audioLoading.value = false;
