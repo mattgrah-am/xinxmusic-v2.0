@@ -1,10 +1,10 @@
 <template>
   <div
-    class="fixed bottom-0 flex min-h-20 w-full items-center justify-between gap-16 bg-neutral-950/85 px-4 py-2"
+    class="fixed bottom-0 flex min-h-20 w-full flex-col gap-2 bg-neutral-950/85 px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 lg:gap-8"
   >
     <ClientOnly>
-      <div class="flex shrink-0 items-center gap-4">
-        <div class="flex items-center gap-3">
+      <div class="flex shrink-0 items-center gap-2 sm:gap-4">
+        <div class="flex items-center gap-2 sm:gap-3">
           <button
             type="button"
             @click="previousTrack"
@@ -12,19 +12,31 @@
             class="cursor-pointer"
           >
             <IconBack
-              class="size-6 shrink-0 text-neutral-50"
+              class="size-5 shrink-0 text-neutral-50 transition-colors hover:text-red-400 sm:size-6"
               :class="{ 'opacity-50': !hasPrevious || isLoading }"
             />
             <span class="sr-only">Previous track</span>
           </button>
-          <button @click="playPause" :disabled="isLoading" class="cursor-pointer">
-            <IconWaveLoading v-if="isLoading" class="size-8 shrink-0 text-red-500 animate-spin" />
+          <button
+            @click="playPause"
+            :disabled="isLoading"
+            class="cursor-pointer"
+          >
+            <IconWaveLoading
+              v-if="isLoading"
+              class="size-7 shrink-0 text-red-500 sm:size-8"
+            />
             <IconPlay
               v-else-if="!isPlaying"
-              class="size-8 shrink-0 fill-neutral-50"
+              class="size-7 shrink-0 fill-neutral-50 transition-colors hover:fill-red-400 sm:size-8"
             />
-            <IconPause v-else class="size-8 shrink-0 fill-neutral-50" />
-            <span class="sr-only">{{ isLoading ? "Loading..." : isPlaying ? "Pause" : "Play" }}</span>
+            <IconPause
+              v-else
+              class="size-7 shrink-0 fill-neutral-50 transition-colors hover:fill-red-400 sm:size-8"
+            />
+            <span class="sr-only">{{
+              isLoading ? "Loading..." : isPlaying ? "Pause" : "Play"
+            }}</span>
           </button>
           <button
             type="button"
@@ -33,7 +45,7 @@
             class="cursor-pointer"
           >
             <IconForward
-              class="size-6 shrink-0 text-neutral-50"
+              class="size-5 shrink-0 text-neutral-50 transition-colors hover:text-red-400 sm:size-6"
               :class="{ 'opacity-50': !hasNext || isLoading }"
             />
             <span class="sr-only">Next track</span>
@@ -45,76 +57,107 @@
           :alt="`${audioData.title} artwork`"
           height="500"
           width="500"
-          class="size-16 shrink-0 rounded-md border-2 border-neutral-900/75"
+          class="size-12 shrink-0 rounded-md border-2 border-neutral-900/75 sm:size-16"
         />
 
-        <div class="">
-          <p class="text-base text-neutral-50">
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm text-neutral-50 sm:text-base">
             {{ audioData.title }}
           </p>
-          <p class="text-sm text-neutral-200">
+          <p class="truncate text-xs text-neutral-200 sm:text-sm">
             {{ audioData.artist }} - {{ audioData.album }}
           </p>
         </div>
       </div>
     </ClientOnly>
 
-    <div class="flex w-full items-center justify-center gap-3">
+    <div class="flex w-full items-center justify-center gap-2 sm:gap-3">
       <p
-        class="text-xs text-neutral-300"
+        class="hidden text-xs text-neutral-300 sm:block"
         :class="{ hidden: waveError || waveLoading }"
       >
         {{ currentTime }}
       </p>
-      <IconWaveLoading v-if="waveLoading" class="w-4 text-red-600" />
-      <div v-else-if="waveError" class="text-xs text-neutral-300">
-        Error loading waveform.
+      <div class="relative flex w-full items-center justify-center">
+        <div
+          ref="waveformRef"
+          class="w-full"
+          :class="{ 'opacity-0': waveError || waveLoading }"
+        />
+        <div v-if="waveLoading" class="absolute inset-0 flex items-center justify-center">
+          <IconWaveLoading class="w-4 text-red-600" />
+        </div>
+        <div v-else-if="waveError" class="absolute inset-0 flex items-center justify-center">
+          <div class="text-xs text-neutral-300">
+            Error loading waveform.
+          </div>
+        </div>
       </div>
-      <div
-        ref="waveformRef"
-        class="w-full"
-        :class="{ hidden: waveError || waveLoading }"
-      />
+      <div class="flex items-center gap-2 sm:hidden">
+        <button
+          type="button"
+          @click="shuffleAndPlay"
+          :disabled="isLoading"
+          class="cursor-pointer transition-colors hover:text-red-400"
+          :class="{ 'opacity-50': isLoading }"
+        >
+          <IconShuffle class="size-5 shrink-0" />
+          <span class="sr-only">Play random song</span>
+        </button>
+        <button
+          type="button"
+          @click="toggleMute"
+          :disabled="isLoading"
+          class="cursor-pointer"
+        >
+          <IconVolumeLow
+            v-if="!isMuted"
+            class="size-5 shrink-0 text-neutral-50 transition-colors hover:text-red-400"
+            :class="{ 'opacity-50': isLoading }"
+          />
+          <IconMute
+            v-else
+            class="size-5 shrink-0 text-neutral-50 transition-colors hover:text-red-400"
+            :class="{ 'opacity-50': isLoading }"
+          />
+          <span class="sr-only">{{ isMuted ? "Unmute" : "Mute" }}</span>
+        </button>
+      </div>
       <p
-        class="text-xs text-neutral-300"
+        class="hidden text-xs text-neutral-300 sm:block"
         :class="{ hidden: waveError || waveLoading }"
       >
         {{ duration }}
       </p>
     </div>
 
-    <div class="flex items-center gap-4">
+    <div class="hidden items-center gap-4 sm:flex">
       <button
         type="button"
-        @click="toggleShuffle"
+        @click="shuffleAndPlay"
         :disabled="isLoading"
-        :class="{ 'text-red-500': isShuffled, 'opacity-50': isLoading }"
-        class="cursor-pointer"
+        class="cursor-pointer transition-colors hover:text-red-400"
+        :class="{ 'opacity-50': isLoading }"
       >
         <IconShuffle class="size-6 shrink-0" />
-        <span class="sr-only">{{
-          isShuffled ? "Disable shuffle" : "Enable shuffle"
-        }}</span>
+        <span class="sr-only">Play random song</span>
       </button>
       <button
         type="button"
-        @click="toggleRepeat"
+        @click="toggleMute"
         :disabled="isLoading"
-        :class="{ 'text-red-500': isRepeating, 'opacity-50': isLoading }"
         class="cursor-pointer"
       >
-        <IconRepeat class="size-6 shrink-0" />
-        <span class="sr-only">{{
-          isRepeating ? "Disable repeat" : "Enable repeat"
-        }}</span>
-      </button>
-      <button type="button" @click="toggleMute" :disabled="isLoading" class="cursor-pointer">
         <IconVolumeLow
           v-if="!isMuted"
-          class="size-6 shrink-0 text-neutral-50"
+          class="size-6 shrink-0 text-neutral-50 transition-colors hover:text-red-400"
           :class="{ 'opacity-50': isLoading }"
         />
-        <IconMute v-else class="size-6 shrink-0 text-neutral-50" :class="{ 'opacity-50': isLoading }" />
+        <IconMute
+          v-else
+          class="size-6 shrink-0 text-neutral-50 transition-colors hover:text-red-400"
+          :class="{ 'opacity-50': isLoading }"
+        />
         <span class="sr-only">{{ isMuted ? "Unmute" : "Mute" }}</span>
       </button>
     </div>
@@ -128,6 +171,9 @@ import Hover from "wavesurfer.js/dist/plugins/hover.esm.js";
 import { music } from "@/utils/music";
 import type { song } from "@/utils/music";
 
+const config = useRuntimeConfig();
+const debug = !config.public.production; // Enable debug mode based on environment
+
 const waveformRef = ref<HTMLElement | null>(null);
 const wavesurfer = ref<WaveSurfer | null>(null);
 const isPlaying = ref(false);
@@ -140,9 +186,9 @@ const duration = ref("0:00");
 const timerInterval = ref<number | null>(null);
 const currentTime = ref("0:00");
 const isShuffled = ref(false);
-const isRepeating = ref(false);
 const isMuted = ref(false);
 const currentTrackIndex = ref(0);
+const shouldAutoPlay = ref(false);
 
 const props = defineProps<{
   audioData: song;
@@ -174,8 +220,25 @@ onMounted(() => {
   );
 });
 
+// Update current track index when audio data changes
+watch(
+  () => props.audioData.id,
+  (newId) => {
+    currentTrackIndex.value = music.findIndex((track) => track.id === newId);
+  },
+);
+
+// Update artwork when audio data changes
+watch(
+  () => props.audioData.artwork,
+  (newArtwork) => {
+    artwork.value = newArtwork;
+    if (debug) console.log("Artwork updated:", newArtwork);
+  },
+);
+
 const playPause = () => {
-  console.log("playPause");
+  if (debug) console.log("playPause");
   if (wavesurfer.value) {
     wavesurfer.value.playPause();
     isPlaying.value = !isPlaying.value;
@@ -198,12 +261,15 @@ const nextTrack = () => {
   }
 };
 
-const toggleShuffle = () => {
-  isShuffled.value = !isShuffled.value;
-};
+const shuffleAndPlay = () => {
+  // Pick a random song from the music array
+  const randomIndex = Math.floor(Math.random() * music.length);
+  const randomSong = music[randomIndex];
 
-const toggleRepeat = () => {
-  isRepeating.value = !isRepeating.value;
+  // Emit the track change to update the main track
+  emit("track-change", randomSong);
+
+  if (debug) console.log("Shuffle selected:", randomSong.title);
 };
 
 const toggleMute = () => {
@@ -215,22 +281,22 @@ const toggleMute = () => {
 
 const initializeWaveSurfer = () => {
   if (!waveformRef.value) {
-    console.error("Waveform container element not found.");
+    if (debug) console.error("Waveform container element not found.");
     waveError.value = true;
     return;
   }
-  
+
   // Start loading states
   waveLoading.value = true;
   audioLoading.value = true;
-  
+
   wavesurfer.value = WaveSurfer.create({
     container: waveformRef.value,
     waveColor: props.waveformOptions?.waveColor ?? "oklch(0.872 0.01 258.338)",
     progressColor:
       props.waveformOptions?.progressColor ?? "oklch(0.645 0.246 16.439)",
     cursorColor: "oklch(0.872 0.01 258.338)",
-    height: props.waveformOptions?.height ?? 36,
+    height: props.waveformOptions?.height ?? 28,
     barHeight: props.waveformOptions?.barHeight ?? 1,
     barWidth: props.waveformOptions?.barWidth ?? 2,
     barGap: props.waveformOptions?.barGap ?? 4,
@@ -252,18 +318,24 @@ const initializeWaveSurfer = () => {
 
   // Audio is loading - wait for it to be ready
   wavesurfer.value.on("loading", (percent) => {
-    console.log("Loading progress:", percent + "%");
+    if (debug) console.log("Loading progress:", percent + "%");
     audioLoading.value = true;
   });
 
   wavesurfer.value.on("ready", () => {
-    console.log("WaveSurfer is ready.");
+    if (debug) console.log("WaveSurfer is ready.");
     waveLoading.value = false;
     audioLoading.value = false;
     totalTime.value = wavesurfer.value?.getDuration() ?? 0;
     const minutes = Math.floor(totalTime.value / 60);
     const seconds = Math.floor(totalTime.value % 60);
     duration.value = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+    // Auto-play if requested
+    if (shouldAutoPlay.value && wavesurfer.value) {
+      wavesurfer.value.play();
+      shouldAutoPlay.value = false; // Reset flag
+    }
   });
 
   wavesurfer.value.on("play", () => {
@@ -279,7 +351,7 @@ const initializeWaveSurfer = () => {
 
   // Handle loading errors
   wavesurfer.value.on("error", (error) => {
-    console.error("Audio loading error:", error);
+    if (debug) console.error("Audio loading error:", error);
     waveError.value = true;
     waveLoading.value = false;
     audioLoading.value = false;
@@ -299,7 +371,10 @@ watch(
       audioLoading.value = true;
       waveLoading.value = true;
       isPlaying.value = false;
-      
+
+      // Set auto-play flag for new tracks
+      shouldAutoPlay.value = true;
+
       wavesurfer.value.load(newAudioUrl);
     }
   },

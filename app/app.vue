@@ -7,7 +7,7 @@
         <p class="tracking-widest uppercase">Music archive</p>
         <a
           :href="emailHref"
-          class="mb-1 flex items-center gap-2 fill-neutral-100 text-sm tracking-widest uppercase hover:text-neutral-300 transition-colors"
+          class="mb-1 flex items-center gap-2 fill-neutral-100 text-sm tracking-widest uppercase transition-colors hover:text-neutral-300"
         >
           Contact <IconMail class="size-5 text-neutral-100" />
         </a>
@@ -51,7 +51,13 @@
           />
           <div class="flex w-full flex-col justify-between py-1">
             <div v-for="song in item" :key="song.id">
-              <h4>{{ song.title }}</h4>
+              <button
+                @click="selectSong(song)"
+                class="w-full cursor-pointer text-left transition-colors hover:text-red-400"
+                :class="{ 'font-bold text-red-500': isCurrentSong(song) }"
+              >
+                <h4>{{ song.title }}</h4>
+              </button>
             </div>
           </div>
         </div>
@@ -67,10 +73,15 @@
           </h2>
         </div>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div
+          <button
             v-for="song in single"
             :key="song.id"
-            class="flex items-center gap-4 rounded-md border border-neutral-800/50 bg-neutral-800/25 p-0.5"
+            @click="selectSong(song)"
+            class="flex cursor-pointer items-center gap-4 rounded-md border border-neutral-800/50 bg-neutral-800/25 p-0.5 text-left transition-colors hover:bg-neutral-800/50"
+            :class="{
+              'border-red-500 bg-red-900/25 ring-1 ring-red-500':
+                isCurrentSong(song),
+            }"
           >
             <img
               :src="song.artwork"
@@ -79,8 +90,10 @@
               height="500"
               class="size-16 shrink-0 rounded-md border-2 border-neutral-950/75"
             />
-            <p>{{ song.title }}</p>
-          </div>
+            <p :class="{ 'font-bold text-red-400': isCurrentSong(song) }">
+              {{ song.title }}
+            </p>
+          </button>
         </div>
       </div>
       <div class="mb-6 border-b border-neutral-800 px-4 pb-8 shadow">
@@ -94,10 +107,15 @@
           </h2>
         </div>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div
+          <button
             v-for="song in remix"
             :key="song.id"
-            class="flex items-center gap-4 rounded-md border border-neutral-800/50 bg-neutral-800/25 p-0.5"
+            @click="selectSong(song)"
+            class="flex cursor-pointer items-center gap-4 rounded-md border border-neutral-800/50 bg-neutral-800/25 p-0.5 text-left transition-colors hover:bg-neutral-800/50"
+            :class="{
+              'border-red-500 bg-red-900/25 ring-1 ring-red-500':
+                isCurrentSong(song),
+            }"
           >
             <img
               :src="song.artwork"
@@ -106,12 +124,14 @@
               height="500"
               class="size-16 shrink-0 rounded-md border-2 border-neutral-950/75"
             />
-            <p>{{ song.title }}</p>
-          </div>
+            <p :class="{ 'font-bold text-red-400': isCurrentSong(song) }">
+              {{ song.title }}
+            </p>
+          </button>
         </div>
       </div>
       <footer class="text-center">
-        <p>
+        <p class="text-sm text-neutral-400">
           Created with 🖤 by
           <NuxtLink
             to="https://matg.dev"
@@ -132,7 +152,33 @@
 import { music } from "@/utils/music";
 import type { song } from "@/utils/music";
 
-const track = ref(music[Math.floor(Math.random() * music.length)]);
+const config = useRuntimeConfig();
+const debug = !config.public.production; // Enable debug mode based on environment
+
+const track = ref(music[0]); // Start with first song to avoid hydration mismatch
+const isClient = ref(false);
+
+// Debug: Log the selected track on initialization
+if (debug)
+  console.log(
+    "Initial track selected:",
+    track.value.title,
+    "ID:",
+    track.value.id,
+  );
+
+// Set random song and enable highlighting only on client
+onMounted(() => {
+  track.value = music[Math.floor(Math.random() * music.length)];
+  isClient.value = true;
+  if (debug)
+    console.log(
+      "Client-side track selected:",
+      track.value.title,
+      "ID:",
+      track.value.id,
+    );
+});
 
 const endOfTime = ref(music.filter((track) => track.album === "End of Time"));
 const closeYourEyesAndListen = ref(
@@ -147,7 +193,18 @@ const handleTrackChange = (newTrack: song) => {
   track.value = newTrack;
 };
 
+// Song selection functionality
+const selectSong = (song: song) => {
+  track.value = song;
+};
+
+const isCurrentSong = (song: song) => {
+  return isClient.value && track.value && track.value.id === song.id;
+};
+
 // Simple email obfuscation - base64 encoded
-const obfuscatedEmail = 'Y29udGFjdEB4aW54bXVzaWMuY29t'; // base64: contact@xinxmusic.com
-const emailHref = computed(() => `mailto:${atob(obfuscatedEmail)}?subject=Mail from xinxmusic.com`);
+const obfuscatedEmail = "Y29udGFjdEB4aW54bXVzaWMuY29t"; // base64: contact@xinxmusic.com
+const emailHref = computed(
+  () => `mailto:${atob(obfuscatedEmail)}?subject=Mail from xinxmusic.com`,
+);
 </script>
