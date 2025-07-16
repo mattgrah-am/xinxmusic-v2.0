@@ -28,7 +28,8 @@
           Xinx Music Archive
         </h1>
         <p class="mt-2 text-center text-sm text-neutral-300">
-          Electronic Music Producer & DJ - Dubstep, Experimental & Underground Sounds
+          Electronic Music Producer & DJ - Dubstep, Experimental & Underground
+          Sounds
         </p>
       </section>
       <section v-for="(item, idx) in ep" :key="idx" class="px-4">
@@ -41,32 +42,32 @@
             EP
           </span>
           <h2 class="text-neutral-200 uppercase">
-            {{ item[0].album }}
+            {{ item[0]?.album }}
           </h2>
         </header>
 
         <article
-          class="mb-8 flex items-stretch gap-6 border-b border-neutral-800 pb-8 shadow"
+          class="mb-8 flex flex-col items-stretch gap-6 border-b border-neutral-800 pb-8 shadow sm:flex-row"
         >
           <img
-            :src="item[0].artwork"
-            :alt="`${item[0].album} EP cover art by Xinx - Electronic music album artwork`"
+            :src="item[0]?.artwork"
+            :alt="`${item[0]?.album} EP cover art by Xinx - Electronic music album artwork`"
             width="500"
             height="500"
-            class="size-64 rounded-xl border border-neutral-900 shadow"
+            class="size-full rounded-xl border border-neutral-900 shadow sm:size-64"
             loading="lazy"
           />
-          <div class="flex w-full flex-col justify-between py-1">
-            <div v-for="song in item" :key="song.id">
-              <button
-                @click="selectSong(song)"
-                class="w-full cursor-pointer text-left transition-colors hover:text-red-400"
-                :class="{ 'font-bold text-red-500': isCurrentSong(song) }"
-                :aria-label="`Play ${song.title} by ${song.artist}`"
-              >
-                <h3>{{ song.title }}</h3>
-              </button>
-            </div>
+          <div class="flex w-full flex-col justify-between gap-2">
+            <button
+              v-for="epSong in item"
+              :key="epSong.id"
+              class="w-full cursor-pointer text-left transition-colors hover:text-red-400"
+              :class="{ 'font-bold text-red-500': isCurrentSong(epSong) }"
+              :aria-label="`Play ${epSong.title} by ${epSong.artist}`"
+              @click="selectSong(epSong)"
+            >
+              <h3>{{ epSong.title }}</h3>
+            </button>
           </div>
         </article>
       </section>
@@ -83,26 +84,28 @@
         </header>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           <button
-            v-for="song in single"
-            :key="song.id"
-            @click="selectSong(song)"
+            v-for="singleSong in single"
+            :key="singleSong.id"
             class="flex cursor-pointer items-center gap-4 rounded-md border border-neutral-800/50 bg-neutral-800/25 p-0.5 text-left transition-colors hover:bg-neutral-800/50"
             :class="{
               'border-red-500 bg-red-900/25 ring-1 ring-red-500':
-                isCurrentSong(song),
+                isCurrentSong(singleSong),
             }"
-            :aria-label="`Play ${song.title} by ${song.artist}`"
+            :aria-label="`Play ${singleSong.title} by ${singleSong.artist}`"
+            @click="selectSong(singleSong)"
           >
             <img
-              :src="song.artwork"
-              :alt="`${song.title} single cover art by Xinx - Electronic music track artwork`"
+              :src="singleSong.artwork"
+              :alt="`${singleSong.title} single cover art by Xinx - Electronic music track artwork`"
               width="500"
               height="500"
               class="size-16 shrink-0 rounded-md border-2 border-neutral-950/75"
               loading="lazy"
             />
-            <h3 :class="{ 'font-bold text-red-400': isCurrentSong(song) }">
-              {{ song.title }}
+            <h3
+              :class="{ 'font-bold text-red-400': isCurrentSong(singleSong) }"
+            >
+              {{ singleSong.title }}
             </h3>
           </button>
         </div>
@@ -120,26 +123,26 @@
         </header>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           <button
-            v-for="song in remix"
-            :key="song.id"
-            @click="selectSong(song)"
+            v-for="remixSong in remix"
+            :key="remixSong.id"
             class="flex cursor-pointer items-center gap-4 rounded-md border border-neutral-800/50 bg-neutral-800/25 p-0.5 text-left transition-colors hover:bg-neutral-800/50"
             :class="{
               'border-red-500 bg-red-900/25 ring-1 ring-red-500':
-                isCurrentSong(song),
+                isCurrentSong(remixSong),
             }"
-            :aria-label="`Play ${song.title} by ${song.artist}`"
+            :aria-label="`Play ${remixSong.title} by ${remixSong.artist}`"
+            @click="selectSong(remixSong)"
           >
             <img
-              :src="song.artwork"
-              :alt="`${song.title} remix cover art by Xinx - Electronic music remix artwork`"
+              :src="remixSong.artwork"
+              :alt="`${remixSong.title} remix cover art by Xinx - Electronic music remix artwork`"
               width="500"
               height="500"
               class="size-16 shrink-0 rounded-md border-2 border-neutral-950/75"
               loading="lazy"
             />
-            <h3 :class="{ 'font-bold text-red-400': isCurrentSong(song) }">
-              {{ song.title }}
+            <h3 :class="{ 'text-red-400': isCurrentSong(remixSong) }">
+              {{ remixSong.title }}
             </h3>
           </button>
         </div>
@@ -158,7 +161,7 @@
       </footer>
     </main>
 
-    <MusicPlayer :audio-data="track" @track-change="handleTrackChange" />
+    <MusicPlayer v-if="track" :audio-data="track" @track-change="handleTrackChange" />
   </div>
 </template>
 
@@ -176,9 +179,9 @@ const isClient = ref(false);
 if (debug)
   console.log(
     "Initial track selected:",
-    track.value.title,
+    track.value?.title,
     "ID:",
-    track.value.id,
+    track.value?.id,
   );
 
 // Set random song and enable highlighting only on client
@@ -188,9 +191,9 @@ onMounted(() => {
   if (debug)
     console.log(
       "Client-side track selected:",
-      track.value.title,
+      track.value?.title,
       "ID:",
-      track.value.id,
+      track.value?.id,
     );
 });
 
@@ -232,34 +235,34 @@ watchEffect(() => {
           innerHTML: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "MusicRecording",
-            "name": track.value.title,
-            "byArtist": {
+            name: track.value.title,
+            byArtist: {
               "@type": "MusicGroup",
-              "name": track.value.artist,
-              "url": "https://xinxmusic.com"
+              name: track.value.artist,
+              url: "https://xinxmusic.com",
             },
-            "inAlbum": {
+            inAlbum: {
               "@type": "MusicAlbum",
-              "name": track.value.album,
-              "byArtist": {
+              name: track.value.album,
+              byArtist: {
                 "@type": "MusicGroup",
-                "name": track.value.artist
-              }
+                name: track.value.artist,
+              },
             },
-            "url": track.value.audio,
-            "image": track.value.artwork,
-            "genre": ["Electronic", "Dubstep", "Experimental"],
-            "recordingOf": {
+            url: track.value.audio,
+            image: track.value.artwork,
+            genre: ["Electronic", "Dubstep", "Experimental"],
+            recordingOf: {
               "@type": "MusicComposition",
-              "name": track.value.title,
-              "composer": {
+              name: track.value.title,
+              composer: {
                 "@type": "Person",
-                "name": track.value.artist
-              }
-            }
-          })
-        }
-      ]
+                name: track.value.artist,
+              },
+            },
+          }),
+        },
+      ],
     });
   }
 });

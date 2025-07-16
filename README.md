@@ -16,20 +16,24 @@ A modern music streaming web application built with Nuxt 4, featuring a custom a
 ## Tech Stack
 
 ### Core Framework
+
 - **Nuxt 4**: Meta-framework for Vue.js with SSR capabilities
 - **Vue 3**: Progressive JavaScript framework with Composition API
 - **TypeScript**: Type-safe JavaScript development
 
 ### Styling & UI
+
 - **TailwindCSS v4**: Utility-first CSS framework with the latest version
 - **@tailwindcss/vite**: Vite plugin for TailwindCSS integration
 - **@nuxt/fonts**: Font optimization and management
 
 ### Audio & Media
+
 - **WaveSurfer.js v7**: Audio waveform visualization library
 - **Custom Audio Components**: Purpose-built audio player components
 
 ### Development Tools
+
 - **ESLint**: Code linting with @nuxt/eslint integration
 - **Prettier**: Code formatting with TailwindCSS plugin
 - **Vite**: Fast build tool and development server
@@ -69,14 +73,17 @@ A modern music streaming web application built with Nuxt 4, featuring a custom a
 The application features an extensive catalog of Xinx's electronic music:
 
 ### Albums
+
 - **End of Time** (5 tracks)
 - **Close Your Eyes and Listen** (5 tracks)
 
 ### Singles
+
 - 27+ original electronic tracks covering various subgenres
 - Includes tracks like "Air Raid", "Brain Storm", "Crazy Clown Factory", "Insecticide", and many more
 
 ### Remixes
+
 - Official remixes of tracks by other artists
 - Notable remixes include "Requiem for a Dream", "Halo 4 - Nemesis", and "Oxymoron"
 
@@ -153,15 +160,19 @@ bun run preview
 ## Configuration
 
 ### Nuxt Configuration
+
 The project uses modern Nuxt 4 configuration with:
+
 - TailwindCSS integration via Vite plugin
 - ESLint and Fonts modules
 - Development tools enabled
 
 ### TypeScript
+
 Full TypeScript support with custom type definitions for the music catalog structure.
 
 ### Audio Integration
+
 WaveSurfer.js is integrated for advanced audio visualization and playback controls.
 
 ## License

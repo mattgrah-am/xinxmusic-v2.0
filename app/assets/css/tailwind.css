@@ -9,18 +9,18 @@
   }
 
   h1 {
-    @apply text-4xl font-bold tracking-widest;
+    @apply text-3xl font-bold tracking-widest;
   }
 
   h2 {
-    @apply text-3xl font-semibold tracking-widest;
+    @apply text-xl font-semibold tracking-widest lg:text-2xl;
   }
 
   h3 {
-    @apply text-2xl font-medium tracking-widest;
+    @apply text-lg font-medium tracking-widest lg:text-xl;
   }
 
   h4 {
-    @apply text-lg tracking-widest;
+    @apply text-base tracking-widest lg:text-lg;
   }
 }
