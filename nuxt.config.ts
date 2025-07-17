@@ -22,7 +22,7 @@ export default defineNuxtConfig({
         {
           name: "keywords",
           content:
-            "Xinx Music, electronic music, dubstep, experimental music, underground music, music producer, DJ, electronic beats, remix, EP, single",
+            "Xinx Music, electronic music, dubstep, experimental music, underground music, music producer, electronic beats, remix, EP, single",
         },
         { name: "author", content: "Xinx" },
         { name: "robots", content: "index, follow" },

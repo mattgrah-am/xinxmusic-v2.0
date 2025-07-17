@@ -18,7 +18,7 @@
       >
         <img
           src="/logo.webp"
-          alt="Xinx Music - Underground Electronic Music Producer and DJ Logo"
+          alt="Xinx Music - Underground Electronic Music Producer Logo"
           width="768"
           height="321"
           class=""
@@ -28,8 +28,7 @@
           Xinx Music Archive
         </h1>
         <p class="mt-2 text-center text-sm text-neutral-300">
-          Electronic Music Producer & DJ - Dubstep, Experimental & Underground
-          Sounds
+          Electronic Music Producer - Dubstep, Experimental & Underground Sounds
         </p>
       </section>
       <section v-for="(item, idx) in ep" :key="idx" class="px-4">
@@ -178,7 +177,13 @@ const isClient = ref(false);
 
 // Set random song and enable highlighting only on client
 onMounted(() => {
-  track.value = music[Math.floor(Math.random() * music.length)];
+  if (music.length > 0) {
+    const randomIndex = Math.floor(Math.random() * music.length);
+    const randomSong = music[randomIndex];
+    if (randomSong) {
+      track.value = randomSong;
+    }
+  }
   isClient.value = true;
 });
 
