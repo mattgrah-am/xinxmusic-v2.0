@@ -346,9 +346,70 @@ const initializeWaveSurfer = () => {
   // Handle loading errors
   wavesurfer.value.on("error", (error) => {
     console.error("Audio loading error:", error);
-    waveError.value = true;
-    waveLoading.value = false;
-    audioLoading.value = false;
+    // If it's a CORS error, try loading with MediaElement backend
+    if (
+      error.toString().includes("fetch") ||
+      error.toString().includes("CORS")
+    ) {
+      waveError.value = false;
+      waveLoading.value = true;
+
+      // Destroy current instance and recreate with MediaElement backend
+      if (wavesurfer.value) {
+        wavesurfer.value.destroy();
+      }
+
+      // Recreate with MediaElement backend which bypasses CORS for audio playback
+      wavesurfer.value = WaveSurfer.create({
+        container: waveformRef.value!,
+        waveColor:
+          props.waveformOptions?.waveColor ?? "oklch(0.872 0.01 258.338)",
+        progressColor:
+          props.waveformOptions?.progressColor ?? "oklch(0.645 0.246 16.439)",
+        cursorColor: "oklch(0.872 0.01 258.338)",
+        height: props.waveformOptions?.height ?? 28,
+        barHeight: props.waveformOptions?.barHeight ?? 1,
+        barWidth: props.waveformOptions?.barWidth ?? 2,
+        barGap: props.waveformOptions?.barGap ?? 4,
+        barRadius: props.waveformOptions?.barRadius ?? 2,
+        cursorWidth: props.waveformOptions?.cursorWidth ?? 2,
+        normalize: props.waveformOptions?.normalize ?? false,
+        backend: "MediaElement",
+        mediaControls: false,
+      });
+
+      wavesurfer.value.load(props.audioData.audio);
+
+      wavesurfer.value.on("ready", () => {
+        waveLoading.value = false;
+        audioLoading.value = false;
+        totalTime.value = wavesurfer.value?.getDuration() ?? 0;
+        const minutes = Math.floor(totalTime.value / 60);
+        const seconds = Math.floor(totalTime.value % 60);
+        duration.value = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+      });
+
+      wavesurfer.value.on("play", () => {
+        isPlaying.value = true;
+        startTimer();
+      });
+
+      wavesurfer.value.on("finish", () => {
+        isPlaying.value = false;
+        stopTimer();
+        currentTime.value = "0:00";
+      });
+
+      wavesurfer.value.on("error", () => {
+        waveError.value = true;
+        waveLoading.value = false;
+        audioLoading.value = false;
+      });
+    } else {
+      waveError.value = true;
+      waveLoading.value = false;
+      audioLoading.value = false;
+    }
   });
 };
 
