@@ -40,7 +40,7 @@ export default defineNuxtConfig({
           content:
             "Discover Xinx Music archive featuring electronic music, dubstep, and experimental sounds. Listen to EPs, singles, and remixes.",
         },
-        { property: "og:image", content: "/logo.webp" },
+        { property: "og:image", content: "/ogImage.png" },
         { property: "og:url", content: "https://xinxmusic.com" },
         { property: "og:site_name", content: "Xinx Music" },
 
@@ -55,7 +55,7 @@ export default defineNuxtConfig({
           content:
             "Discover Xinx Music archive featuring electronic music, dubstep, and experimental sounds.",
         },
-        { name: "twitter:image", content: "/logo.webp" },
+        { name: "twitter:image", content: "/ogImage.png" },
 
         // Additional SEO tags
         { name: "format-detection", content: "telephone=no" },
@@ -83,7 +83,7 @@ export default defineNuxtConfig({
             genre: ["Electronic", "Dubstep", "Experimental"],
             description:
               "Underground electronic music producer and DJ specializing in dubstep and experimental electronic sounds",
-            image: "https://xinxmusic.com/logo.webp",
+            image: "https://xinxmusic.com/ogImage.png",
             sameAs: ["https://xinxmusic.com"],
             member: {
               "@type": "Person",
