@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: "Xinx Music Archive - Electronic Music Producer & DJ",
+      title: "Xinx Music Archive - Electronic Music Producer",
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -33,7 +33,7 @@ export default defineNuxtConfig({
         { property: "og:type", content: "website" },
         {
           property: "og:title",
-          content: "Xinx Music Archive - Electronic Music Producer & DJ",
+          content: "Xinx Music Archive - Electronic Music Producer",
         },
         {
           property: "og:description",
@@ -48,7 +48,7 @@ export default defineNuxtConfig({
         { name: "twitter:card", content: "summary_large_image" },
         {
           name: "twitter:title",
-          content: "Xinx Music Archive - Electronic Music Producer & DJ",
+          content: "Xinx Music Archive - Electronic Music Producer",
         },
         {
           name: "twitter:description",
@@ -88,7 +88,7 @@ export default defineNuxtConfig({
             member: {
               "@type": "Person",
               name: "Xinx",
-              jobTitle: "Music Producer & DJ",
+              jobTitle: "Music Producer",
             },
             mainEntityOfPage: {
               "@type": "WebPage",
