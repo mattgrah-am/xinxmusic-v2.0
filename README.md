@@ -17,25 +17,25 @@ A modern music streaming web application built with Nuxt 4, featuring a custom a
 
 ### Core Framework
 
-- **Nuxt 4**: Meta-framework for Vue.js with SSR capabilities
+- **Nuxt 4.4.4**: Meta-framework for Vue.js with SSR capabilities
 - **Vue 3**: Progressive JavaScript framework with Composition API
 - **TypeScript**: Type-safe JavaScript development
 
 ### Styling & UI
 
-- **TailwindCSS v4**: Utility-first CSS framework with the latest version
-- **@tailwindcss/vite**: Vite plugin for TailwindCSS integration
-- **@nuxt/fonts**: Font optimization and management
+- **TailwindCSS v4.2.4**: Utility-first CSS framework
+- **@tailwindcss/vite 4.2.4**: Vite plugin for TailwindCSS integration
+- **@nuxt/fonts 0.14.0**: Font optimization and management
 
 ### Audio & Media
 
-- **WaveSurfer.js v7**: Audio waveform visualization library
+- **WaveSurfer.js 7.12.6**: Audio waveform visualization library
 - **Custom Audio Components**: Purpose-built audio player components
 
 ### Development Tools
 
-- **ESLint**: Code linting with @nuxt/eslint integration
-- **Prettier**: Code formatting with TailwindCSS plugin
+- **ESLint 10.3.0**: Code linting with @nuxt/eslint 1.15.2 integration
+- **Prettier 3.8.3**: Code formatting with TailwindCSS plugin
 - **Vite**: Fast build tool and development server
 
 ## Project Structure
@@ -92,17 +92,7 @@ The application features an extensive catalog of Xinx's electronic music:
 Make sure to install dependencies:
 
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
@@ -110,17 +100,7 @@ bun install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
@@ -128,33 +108,13 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
 ## Configuration
